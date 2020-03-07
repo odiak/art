@@ -50,7 +50,7 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
       })
       newSnows = newSnows.concat(
         range(3)
-          .map(() => ({ y: 0, x: Math.floor(rand(4) * state.width) }))
+          .map(() => ({ y: 0, x: Math.floor(rand(2) * state.width) }))
           .toArray()
       )
 
