@@ -4,6 +4,7 @@ import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
 import { Snow } from './Snow'
 import { Global, css } from '@emotion/core'
 import styled from '@emotion/styled'
+import { Untitled1 } from './Untitled1'
 
 const globalStyle = css`
   html,
@@ -31,6 +32,9 @@ const Index: FC<{}> = () => (
       <li>
         <Link to="/snow">Snow</Link>
       </li>
+      <li>
+        <Link to="/untitled1">Untitled 1</Link>
+      </li>
     </ul>
   </Container>
 )
@@ -42,6 +46,7 @@ const App = () => (
       <Switch>
         <Route path="/" exact component={Index} />
         <Route path="/snow" component={Snow} />
+        <Route path="/untitled1" component={Untitled1} />
       </Switch>
     </>
   </BrowserRouter>
