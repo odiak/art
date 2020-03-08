@@ -1,5 +1,5 @@
 import React, { FC, useMemo, useEffect, useState, useReducer } from 'react'
-import { updateArray } from '../utils/updateArray'
+import { updateArray } from './utils/updateArray'
 import { range } from '@odiak/iterate'
 
 type Point = { x: number; y: number }
