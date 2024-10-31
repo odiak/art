@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { Snow } from './Snow'
-import { Global, css } from '@emotion/core'
+import { Global, css } from '@emotion/react'
 import styled from '@emotion/styled'
 import { Untitled1 } from './Untitled1'
 

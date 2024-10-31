@@ -273,13 +273,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/core@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "@emotion/core@npm:11.0.0"
-  checksum: 10/c73a185d7dc03ef21e95bbf427d7373c0edd72ae3548f7601afb86aa0e96b7d9d5632c6bfce4d0c892c538362d7906426e6795e4e72f9296c8c29861ebe00493
-  languageName: node
-  linkType: hard
-
 "@emotion/hash@npm:^0.9.2":
   version: 0.9.2
   resolution: "@emotion/hash@npm:0.9.2"
@@ -906,7 +899,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "art@workspace:."
   dependencies:
-    "@emotion/core": "npm:^11.0.0"
     "@emotion/react": "npm:^11.13.3"
     "@emotion/styled": "npm:^11.13.0"
     "@odiak/iterate": "npm:^0.0.4"
