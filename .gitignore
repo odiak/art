@@ -1,5 +1,5 @@
-.yarn
+.yarn/*
+!.yarn/releases
 .pnp.js
-.vscode
 dist
 node_modules
