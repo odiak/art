@@ -61,7 +61,7 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
         range(3)
           .map(() => ({
             y: 0,
-            x: Math.floor(rand(2) * state.width),
+            x: Math.round(rand(2) * state.width),
             speed: (Math.random() * 2 + 1) * 0.9
           }))
           .toArray()
