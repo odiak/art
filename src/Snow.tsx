@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useEffect, useState, useReducer } from 'react'
+import React, { FC, useMemo, useEffect, useReducer } from 'react'
 import { updateArray } from './utils/updateArray'
 import { range } from '@odiak/iterate'
 
@@ -43,12 +43,17 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
     }
 
     case 'pullDownAndAdd': {
-      let newSnows: Snow[] = state.snowsInAir.map(({ x, y, speed }) => ({ x, y: y + speed, speed }))
+      let newSnows: Snow[] = state.snowsInAir.map(({ x, y, speed }) => ({
+        x: x + (rand(5) * 2 - 1) * 0.7,
+        y: y + speed,
+        speed
+      }))
       let newHeights = state.snowHeights
       newSnows = newSnows.filter(({ x, y }) => {
-        const settled = y >= state.height - newHeights[x]
+        const i = Math.floor(x)
+        const settled = y >= state.height - newHeights[i]
         if (settled) {
-          newHeights = updateArray(newHeights, x, (h) => h + 1)
+          newHeights = updateArray(newHeights, i, (h) => h + 1)
         }
         return !settled
       })
