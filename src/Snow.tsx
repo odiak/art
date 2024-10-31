@@ -2,12 +2,16 @@ import React, { FC, useMemo, useEffect, useState, useReducer } from 'react'
 import { updateArray } from './utils/updateArray'
 import { range } from '@odiak/iterate'
 
-type Point = { x: number; y: number }
+type Snow = {
+  x: number
+  y: number
+  speed: number
+}
 
 type State = {
   width: number
   height: number
-  snowsInAir: Array<Point>
+  snowsInAir: Array<Snow>
   snowHeights: Array<number>
 }
 
@@ -22,7 +26,7 @@ const initialState: State = { width: 0, height: 0, snowsInAir: [], snowHeights: 
 
 function rand(n: number): number {
   let r = 0
-  for (const i of range(n)) {
+  for (const _ of range(n)) {
     r += Math.random()
   }
   return r / n
@@ -39,7 +43,7 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
     }
 
     case 'pullDownAndAdd': {
-      let newSnows = state.snowsInAir.map(({ x, y }) => ({ x, y: y + 5 }))
+      let newSnows: Snow[] = state.snowsInAir.map(({ x, y, speed }) => ({ x, y: y + speed, speed }))
       let newHeights = state.snowHeights
       newSnows = newSnows.filter(({ x, y }) => {
         const settled = y >= state.height - newHeights[x]
@@ -50,7 +54,11 @@ const reducer: React.Reducer<State, Action> = (state, action) => {
       })
       newSnows = newSnows.concat(
         range(3)
-          .map(() => ({ y: 0, x: Math.floor(rand(2) * state.width) }))
+          .map(() => ({
+            y: 0,
+            x: Math.floor(rand(2) * state.width),
+            speed: (Math.random() * 2 + 1) * 0.9
+          }))
           .toArray()
       )
 
@@ -69,12 +77,18 @@ export const Snow: FC<{}> = () => {
   useEffect(() => {
     dispatch({ type: 'init', payload: { width, height } })
 
-    const t = setInterval(() => {
+    let cancelled = false
+
+    const tick = () => {
+      if (cancelled) return
       dispatch({ type: 'pullDownAndAdd' })
-    }, 100)
+      requestAnimationFrame(tick)
+    }
+
+    requestAnimationFrame(tick)
 
     return () => {
-      clearInterval(t)
+      cancelled = true
     }
   }, [width, height])
 
