@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import { render } from 'react-dom'
-import { BrowserRouter, Switch, Route, Link } from 'react-router-dom'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import { Snow } from './Snow'
 import { Global, css } from '@emotion/core'
 import styled from '@emotion/styled'
@@ -41,15 +41,20 @@ const Index: FC<{}> = () => (
 
 const App = () => (
   <BrowserRouter>
-    <>
-      <Global styles={globalStyle} />
-      <Switch>
-        <Route path="/" exact component={Index} />
-        <Route path="/snow" component={Snow} />
-        <Route path="/untitled1" component={Untitled1} />
-      </Switch>
-    </>
+    <Global styles={globalStyle} />
+    <Routes>
+      <Route path="/" element={<Index />} />
+      <Route path="/snow" element={<Snow />} />
+      <Route path="/untitled1" element={<Untitled1 />} />
+    </Routes>
   </BrowserRouter>
 )
 
-render(<App />, document.getElementById('app'))
+const container = document.getElementById('app')
+if (!container) throw new Error('Failed to find the root element')
+
+createRoot(container).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+)
