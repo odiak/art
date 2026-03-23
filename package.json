@@ -1,24 +1,28 @@
 {
   "name": "art",
   "scripts": {
-    "start": "vite",
-    "build": "vite build"
+    "dev": "react-router dev",
+    "start": "react-router dev",
+    "build": "react-router build",
+    "typecheck": "react-router typegen && tsc"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.3",
-    "prettier": "^3.3.3",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.10"
+    "@react-router/dev": "^7.13.2",
+    "@react-router/node": "^7.13.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "prettier": "^3.8.1",
+    "typescript": "^5",
+    "vite": "^7",
+    "vite-tsconfig-paths": "^6.1.1"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@odiak/iterate": "^0.0.4",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.27.0"
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router": "^7.13.2"
   },
   "packageManager": "yarn@4.5.1"
 }
