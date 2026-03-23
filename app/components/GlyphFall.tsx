@@ -16,7 +16,6 @@ type GlyphDrop = {
   id: number;
   char: string;
   color: string;
-  box: [number, number, number];
   position: [number, number, number];
 };
 
@@ -33,40 +32,10 @@ const GLYPH_SIZE = 1.75;
 const GLYPH_DEPTH = 1;
 const FLOOR_WIDTH = 17;
 const FLOOR_DEPTH = 14;
-
-let measureContext: CanvasRenderingContext2D | null = null;
+const GLYPH_LIFETIME_MS = 60_000;
 
 function normalizeKey(key: string): string | null {
   return /^[a-z0-9]$/i.test(key) ? key.toUpperCase() : null;
-}
-
-function getMeasureContext() {
-  if (typeof document === "undefined") {
-    return null;
-  }
-
-  if (!measureContext) {
-    measureContext = document.createElement("canvas").getContext("2d");
-  }
-
-  return measureContext;
-}
-
-function estimateGlyphBox(char: string): [number, number, number] {
-  const context = getMeasureContext();
-  if (!context) {
-    return [1.55, 2.1, GLYPH_DEPTH];
-  }
-
-  const fontSize = 160;
-  context.font = `900 ${fontSize}px Helvetica, Arial, sans-serif`;
-
-  const metrics = context.measureText(char);
-  const width = Math.max(1.05, (metrics.width / fontSize) * GLYPH_SIZE * 1.18);
-  const visualHeight = metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
-  const height = Math.max(1.55, (visualHeight / fontSize) * GLYPH_SIZE * 1.55);
-
-  return [width, height, GLYPH_DEPTH];
 }
 
 function randomBetween(min: number, max: number) {
@@ -78,8 +47,7 @@ function createGlyphDrop(id: number, char: string): GlyphDrop {
     id,
     char,
     color: FALL_COLORS[id % FALL_COLORS.length],
-    box: estimateGlyphBox(char),
-    position: [randomBetween(-4.4, 4.4), randomBetween(11, 15), randomBetween(-2.4, 2.4)],
+    position: [randomBetween(-4.4, 4.4), randomBetween(8.5, 11.5), randomBetween(-2.4, 2.4)],
   };
 }
 
@@ -103,33 +71,34 @@ function Floor() {
 }
 
 function GlyphBody({ glyph }: { glyph: GlyphDrop }) {
+  const [hasLanded, setHasLanded] = useState(false);
+
   return (
     <RigidBody
-      colliders={false}
+      colliders="hull"
       position={glyph.position}
       rotation={[0, 0, 0]}
-      friction={0.9}
+      friction={0.82}
       restitution={0.05}
-      angularDamping={0.75}
-      linearDamping={0.2}
-      lockRotations
+      angularDamping={0.3}
+      linearDamping={0.1}
+      enabledRotations={hasLanded ? [true, true, true] : [false, false, false]}
+      additionalSolverIterations={2}
+      onCollisionEnter={() => {
+        setHasLanded(true);
+      }}
       ccd
     >
-      <CuboidCollider
-        args={[glyph.box[0] / 2, glyph.box[1] / 2, glyph.box[2] / 2]}
-        friction={1}
-        restitution={0.02}
-      />
       <Center>
         <Text3D
           font={fontUrl}
           size={GLYPH_SIZE}
           height={GLYPH_DEPTH}
-          curveSegments={12}
+          curveSegments={8}
           bevelEnabled
           bevelThickness={0.06}
           bevelSize={0.035}
-          bevelSegments={5}
+          bevelSegments={3}
           castShadow
           receiveShadow
         >
@@ -145,7 +114,7 @@ function Scene({ glyphs }: { glyphs: GlyphDrop[] }) {
   return (
     <Canvas
       shadows
-      dpr={[1, 2]}
+      dpr={[1, 1.5]}
       camera={{ position: [0, 8.5, 18], fov: 42 }}
       gl={{ antialias: true }}
     >
@@ -157,15 +126,20 @@ function Scene({ glyphs }: { glyphs: GlyphDrop[] }) {
         castShadow
         intensity={1.6}
         position={[9, 14, 7]}
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
         shadow-camera-left={-16}
         shadow-camera-right={16}
         shadow-camera-top={16}
         shadow-camera-bottom={-16}
       />
       <Suspense fallback={null}>
-        <Physics gravity={[0, -8.5, 0]} colliders={false} timeStep={1 / 60}>
+        <Physics
+          gravity={[0, -8.5, 0]}
+          colliders={false}
+          timeStep={1 / 60}
+          numSolverIterations={8}
+        >
           <Floor />
           {glyphs.map((glyph) => (
             <GlyphBody key={glyph.id} glyph={glyph} />
@@ -218,6 +192,7 @@ export function GlyphFall() {
   const [ready, setReady] = useState(false);
   const [glyphs, setGlyphs] = useState<GlyphDrop[]>([]);
   const nextIdRef = useRef(0);
+  const timeoutIdsRef = useRef<number[]>([]);
 
   const onKeyDown = useEffectEvent((event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey || event.altKey) {
@@ -234,11 +209,25 @@ export function GlyphFall() {
     startTransition(() => {
       const id = nextIdRef.current++;
       setGlyphs((current) => current.concat(createGlyphDrop(id, char)));
+
+      const timeoutId = window.setTimeout(() => {
+        setGlyphs((current) => current.filter((glyph) => glyph.id !== id));
+        timeoutIdsRef.current = timeoutIdsRef.current.filter((currentId) => currentId !== timeoutId);
+      }, GLYPH_LIFETIME_MS);
+
+      timeoutIdsRef.current.push(timeoutId);
     });
   });
 
   useEffect(() => {
     setReady(true);
+
+    return () => {
+      timeoutIdsRef.current.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+      timeoutIdsRef.current = [];
+    };
   }, []);
 
   useEffect(() => {
