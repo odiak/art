@@ -18,7 +18,6 @@ type GlyphDrop = {
   color: string;
   box: [number, number, number];
   position: [number, number, number];
-  rotation: [number, number, number];
 };
 
 const FALL_COLORS = [
@@ -31,7 +30,7 @@ const FALL_COLORS = [
 ] as const;
 
 const GLYPH_SIZE = 1.75;
-const GLYPH_DEPTH = 0.55;
+const GLYPH_DEPTH = 1;
 const FLOOR_WIDTH = 17;
 const FLOOR_DEPTH = 14;
 
@@ -81,11 +80,6 @@ function createGlyphDrop(id: number, char: string): GlyphDrop {
     color: FALL_COLORS[id % FALL_COLORS.length],
     box: estimateGlyphBox(char),
     position: [randomBetween(-4.4, 4.4), randomBetween(11, 15), randomBetween(-2.4, 2.4)],
-    rotation: [
-      randomBetween(-0.35, 0.35),
-      randomBetween(0, Math.PI),
-      randomBetween(-0.35, 0.35),
-    ],
   };
 }
 
@@ -113,11 +107,12 @@ function GlyphBody({ glyph }: { glyph: GlyphDrop }) {
     <RigidBody
       colliders={false}
       position={glyph.position}
-      rotation={glyph.rotation}
+      rotation={[0, 0, 0]}
       friction={0.9}
       restitution={0.05}
       angularDamping={0.75}
       linearDamping={0.2}
+      lockRotations
       ccd
     >
       <CuboidCollider
