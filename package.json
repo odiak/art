@@ -12,6 +12,7 @@
     "@types/node": "^24.5.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/three": "^0",
     "prettier": "^3.8.1",
     "typescript": "^5",
     "vite": "^7",
@@ -21,9 +22,13 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@odiak/iterate": "^0.0.4",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.5.0",
+    "@react-three/rapier": "^2.2.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-router": "^7.13.2"
+    "react-router": "^7.13.2",
+    "three": "^0.183.2"
   },
   "packageManager": "yarn@4.5.1"
 }

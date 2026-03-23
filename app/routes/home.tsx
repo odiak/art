@@ -11,6 +11,9 @@ export default function Home() {
       <h1>Digital arts by odiak</h1>
       <ul>
         <li>
+          <Link to="/glyph-fall">Falling Glyphs</Link>
+        </li>
+        <li>
           <Link to="/snow">Snow</Link>
         </li>
         <li>
